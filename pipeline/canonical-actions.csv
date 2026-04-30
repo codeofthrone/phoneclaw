@@ -1,0 +1,21 @@
+canonical_action,element_alias,description,priority
+tap,login_button,點擊登入按鈕,high
+tap,menu_button,點擊主選單,high
+tap,submit_button,提交表單,high
+tap,confirm_button,確認動作,high
+tap,cancel_button,取消動作,medium
+input,email_field,輸入 Email,high
+input,password_field,輸入密碼,high
+input,search_field,輸入搜尋關鍵字,medium
+input,otp_field,輸入 OTP 驗證碼,medium
+assert_visible,home_title,驗證首頁標題可見,high
+assert_visible,error_message,驗證錯誤訊息可見,high
+assert_visible,success_toast,驗證成功提示可見,medium
+assert_visible,loading_spinner,驗證載入中元件可見,medium
+assert_not_visible,loading_spinner,驗證載入中元件消失,medium
+swipe,feed_list,捲動動態列表,medium
+swipe,settings_list,捲動設定列表,low
+wait,network_idle,等待網路閒置,high
+wait,element_ready,等待元素可互動,high
+navigate,back_button,回上一頁,high
+navigate,profile_tab,切換到個人頁籤,medium

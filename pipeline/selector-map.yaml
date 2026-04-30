@@ -1,0 +1,39 @@
+login_button:
+  android:
+    by: pending
+    value: pending
+  ios:
+    by: accessibility_id
+    value: login_button
+
+email_field:
+  android:
+    by: pending
+    value: pending
+  ios:
+    by: iOSNsPredicate
+    value: "name == 'email_field'"
+
+password_field:
+  android:
+    by: pending
+    value: pending
+  ios:
+    by: iOSNsPredicate
+    value: "name == 'password_field'"
+
+home_title:
+  android:
+    by: pending
+    value: pending
+  ios:
+    by: accessibility_id
+    value: home_title
+
+error_message:
+  android:
+    by: pending
+    value: pending
+  ios:
+    by: iOSClassChain
+    value: "**/XCUIElementTypeStaticText[`name CONTAINS 'error'`]"
