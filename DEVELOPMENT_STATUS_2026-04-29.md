@@ -138,10 +138,10 @@ pytest -q
 ## TODO Checklist（可勾選追蹤）
 
 ### Sprint A：連線與穩定性
-- [ ] 實機驗證 PhoneClaw -> Gemini Proxy -> Gemini OAuth 完整成功一次
+- [x] 實機驗證 PhoneClaw -> Gemini Proxy -> Gemini OAuth 完整成功一次（2026-04-30：實機說話 → proxy 回應 speakText("哈囉哈囉哈囉")，全程 HTTP 200）
 - [x] 模擬器驗證同流程（10.0.2.2）**已取消**（2026-04-29：依使用者決策「不需要模擬器」）
 - [x] 驗證 `GEMINI_PROXY_AUTH_TOKEN` 錯誤時回傳 401（2026-04-29：wrong token -> 401，body=`{"error":"Unauthorized proxy token"}`）
-- [ ] 驗證 `MOONDREAM_AUTH` 缺失時 app 端錯誤訊息（2026-04-29：已確認程式有 guard 與 `Log.e` 訊息；待模擬器/實機執行 UI 路徑做最終驗證）
+- [x] 驗證 `MOONDREAM_AUTH` 缺失時 app 端錯誤訊息（2026-04-30：實機執行 magicClicker("back button") → Screenshot loaded 1440x3120 → `E/MainActivity: MOONDREAM_AUTH is missing`，guard 正常觸發）
 
 ### Sprint B：可重現自動化
 - [x] 新增固定測試場景 1（啟動 app + 發送固定 prompt）（2026-04-29：`appium-tests/test_phoneclaw_fixed_scenarios.py::test_scenario_1_launch_and_fixed_prompt_ui`）
@@ -157,5 +157,5 @@ pytest -q
 
 ### Sprint D：交付
 - [x] 整理 commit（proxy / app / tests 分開）（2026-04-29：`COMMIT_PLAN.md`）
-- [ ] 建立 PR 並附上本進度文件（待 `gh auth login` 後執行）
+- [x] 建立 PR 並附上本進度文件（2026-04-30：PR #1 已建立 https://github.com/codeofthrone/phoneclaw/pull/1）
 - [x] 在 PR 附上實測證據（health、chat completion、pytest 結果）（2026-04-29：`PR_EVIDENCE_2026-04-29.md`）
