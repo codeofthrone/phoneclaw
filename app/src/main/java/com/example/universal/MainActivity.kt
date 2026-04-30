@@ -3815,12 +3815,25 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener, Recogniti
                     val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
                     val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
 
-                    val request = Request.Builder()
-                        .url("https://openrouter.ai/api/v1/chat/completions")
+                    val proxyBaseUrl = BuildConfig.GEMINI_PROXY_URL.trim().ifEmpty { "http://10.0.2.2:8787" }
+                    val proxyAuthToken = BuildConfig.GEMINI_PROXY_AUTH_TOKEN.trim()
+                    val proxyEndpoint = if (proxyBaseUrl.endsWith("/")) {
+                        "${proxyBaseUrl}v1/chat/completions"
+                    } else {
+                        "${proxyBaseUrl}/v1/chat/completions"
+                    }
+
+                    val requestBuilder = Request.Builder()
+                        .url(proxyEndpoint)
                         .header("Content-Type", "application/json")
-                        .header("Authorization", "Bearer OPENROUTERKEY")
                         .header("HTTP-Referer", "getsupers.com")
                         .header("X-Title", "PhoneClaw")
+
+                    if (proxyAuthToken.isNotEmpty()) {
+                        requestBuilder.header("Authorization", "Bearer $proxyAuthToken")
+                    }
+
+                    val request = requestBuilder
                         .post(requestBody)
                         .build()
 
@@ -5620,13 +5633,19 @@ Generate JavaScript automation code for the user's command:
                     put("question", question)
                 }
 
+                val moondreamAuth = BuildConfig.MOONDREAM_AUTH.trim()
+                if (moondreamAuth.isEmpty()) {
+                    Log.e("MainActivity", "MOONDREAM_AUTH is missing. Configure it in local.properties or ~/.gradle/gradle.properties")
+                    return@withContext "MOONDREAM_AUTH missing"
+                }
+
                 val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
                 val body = requestBody.toString().toRequestBody(mediaType)
 
                 val request = Request.Builder()
                     .url("https://api.moondream.ai/v1/query")
                     .header("Content-Type", "application/json")
-                    .header("X-Moondream-Auth", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlfaWQiOiI2YzE4ZDI4NC1lNDMzLTQxNjYtYjg4Ni1jOGY4YjIxMTc1OGEiLCJvcmdfaWQiOiJkUDFESW96ZXFTNUxEc3ByNDFXT2N6dkJuSFpOM0hXWSIsImlhdCI6MTc3MDgzNDEyNiwidmVyIjoxfQ.54YnmshifLTBAsOWGCDHR-GL6yzTV-H3EAFNimMbqLk")
+                    .header("X-Moondream-Auth", moondreamAuth)
                     .post(body)
                     .build()
 
@@ -5900,13 +5919,19 @@ Generate JavaScript automation code for the user's command:
                     put("object", objectDescription)
                 }
 
+                val moondreamAuth = BuildConfig.MOONDREAM_AUTH.trim()
+                if (moondreamAuth.isEmpty()) {
+                    Log.e("MainActivity", "MOONDREAM_AUTH is missing. Configure it in local.properties or ~/.gradle/gradle.properties")
+                    return@withContext null
+                }
+
                 val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
                 val body = requestBody.toString().toRequestBody(mediaType)
 
                 val request = Request.Builder()
                     .url("https://api.moondream.ai/v1/point")
                     .header("Content-Type", "application/json")
-                    .header("X-Moondream-Auth", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlfaWQiOiI2YzE4ZDI4NC1lNDMzLTQxNjYtYjg4Ni1jOGY4YjIxMTc1OGEiLCJvcmdfaWQiOiJkUDFESW96ZXFTNUxEc3ByNDFXT2N6dkJuSFpOM0hXWSIsImlhdCI6MTc3MDgzNDEyNiwidmVyIjoxfQ.54YnmshifLTBAsOWGCDHR-GL6yzTV-H3EAFNimMbqLk")
+                    .header("X-Moondream-Auth", moondreamAuth)
                     .post(body)
                     .build()
 
@@ -8510,13 +8535,19 @@ Generate JavaScript automation code for the user's command:
                 put("object", objectDescription)
             }
 
+            val moondreamAuth = BuildConfig.MOONDREAM_AUTH.trim()
+            if (moondreamAuth.isEmpty()) {
+                Log.e("MainActivity", "MOONDREAM_AUTH is missing. Configure it in local.properties or ~/.gradle/gradle.properties")
+                return@withContext null
+            }
+
             val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
             val body = requestBody.toString().toRequestBody(mediaType)
 
             val request = Request.Builder()
                 .url("https://api.moondream.ai/v1/point")
                 .header("Content-Type", "application/json")
-                .header("X-Moondream-Auth", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlfaWQiOiI2YzE4ZDI4NC1lNDMzLTQxNjYtYjg4Ni1jOGY4YjIxMTc1OGEiLCJvcmdfaWQiOiJkUDFESW96ZXFTNUxEc3ByNDFXT2N6dkJuSFpOM0hXWSIsImlhdCI6MTc3MDgzNDEyNiwidmVyIjoxfQ.54YnmshifLTBAsOWGCDHR-GL6yzTV-H3EAFNimMbqLk")
+                .header("X-Moondream-Auth", moondreamAuth)
                 .post(body)
                 .build()
 
