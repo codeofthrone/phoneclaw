@@ -1,0 +1,7 @@
+screen_name,element_alias,view_id,content_desc,visible_text,class_name,index,bounds,tap_x,tap_y,source_run_id,confidence,notes
+login_screen,login_button,,,,,,,,,,high,TODO: PhoneClaw 採點後回填 id/content_desc
+login_screen,email_field,,,,,,,,,,high,TODO: PhoneClaw 採點後回填 id
+login_screen,password_field,,,,,,,,,,high,TODO: PhoneClaw 採點後回填 id
+home_screen,menu_button,,,,,,,,,,medium,TODO: PhoneClaw 採點後回填
+home_screen,home_title,,,,,,,,,,high,TODO: 先用 visible_text 驗證
+common,error_message,,,,,,,,,,medium,TODO: 錯誤路徑採點

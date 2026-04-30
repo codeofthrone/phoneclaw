@@ -3815,12 +3815,25 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener, Recogniti
                     val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
                     val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
 
-                    val request = Request.Builder()
-                        .url("https://openrouter.ai/api/v1/chat/completions")
+                    val proxyBaseUrl = BuildConfig.GEMINI_PROXY_URL.trim().ifEmpty { "http://10.0.2.2:8787" }
+                    val proxyAuthToken = BuildConfig.GEMINI_PROXY_AUTH_TOKEN.trim()
+                    val proxyEndpoint = if (proxyBaseUrl.endsWith("/")) {
+                        "${proxyBaseUrl}v1/chat/completions"
+                    } else {
+                        "${proxyBaseUrl}/v1/chat/completions"
+                    }
+
+                    val requestBuilder = Request.Builder()
+                        .url(proxyEndpoint)
                         .header("Content-Type", "application/json")
-                        .header("Authorization", "Bearer OPENROUTERKEY")
                         .header("HTTP-Referer", "getsupers.com")
                         .header("X-Title", "PhoneClaw")
+
+                    if (proxyAuthToken.isNotEmpty()) {
+                        requestBuilder.header("Authorization", "Bearer $proxyAuthToken")
+                    }
+
+                    val request = requestBuilder
                         .post(requestBody)
                         .build()
 
@@ -4090,22 +4103,26 @@ AVAILABLE FUNCTIONS:
 - simulateTypeInSecondEditableField(text) - Type in second input field
 - pressEnterKey() - Press enter key
 - simulateScrollToBottom() - Scroll to bottom
-- simulateScrollToBottomX(X) - Scroll to bottom with x coordinate 
+- simulateScrollToBottomX(X) - Scroll to bottom with x coordinate
 - simulateScrollToTop() - Scroll to top
 - isTextPresentOnScreen(text) - Check if text exists on screen
 - delay(milliseconds) - Wait for specified time
 - speakText(text) - Make the phone speak
 
+## Vision-Based Interaction (use when element cannot be found by text/description):
+- magicClicker(description) - Use computer vision to find and click a UI element by visual description (e.g. "back button", "search icon", "red close button")
+- magicScraper(description) - Use computer vision to read/extract text or data from the screen by visual description (e.g. "the price shown", "notification count")
+
 RULES:
 1. Generate ONLY JavaScript code, no explanations
-2. Use try-catch blocks for error handling
+2. Do NOT use try-catch blocks — error handling is managed by the runtime
 3. Add delays between actions: delay(2000) for 2 seconds
 4. Always start with speakText() to confirm the action
 5. Use specific coordinates only when necessary
-6. Prefer content description clicks over coordinates
+6. Prefer clickNodesByContentDescription over coordinates; use magicClicker when the element has no accessible description
 7. Return only the JavaScript code, no markdown
 8. For complex tasks, break them into steps with delays
-9. Use appropriate error handling for all operations
+9. Do NOT wrap code in try-catch or any exception handling
 10. Combine multiple functions for sophisticated automation
 
 SCHEDULING EXAMPLES:
@@ -4134,6 +4151,23 @@ Response:
 speakText("Checking battery level");
 var level = getBatteryLevel();
 speakText("Battery is at " + level + " percent");
+
+User: "click the back button using vision"
+Response:
+speakText("Using vision to click the back button");
+magicClicker("back button");
+
+User: "use magic clicker to tap the send button"
+Response:
+speakText("Using vision to find and tap the send button");
+magicClicker("send button");
+delay(2000);
+
+User: "read the notification count on screen"
+Response:
+speakText("Reading notification count");
+var count = magicScraper("notification count badge");
+speakText("Notification count is " + count);
 
 Generate JavaScript automation code for the user's command:
         """.trimIndent()
@@ -5620,13 +5654,19 @@ Generate JavaScript automation code for the user's command:
                     put("question", question)
                 }
 
+                val moondreamAuth = BuildConfig.MOONDREAM_AUTH.trim()
+                if (moondreamAuth.isEmpty()) {
+                    Log.e("MainActivity", "MOONDREAM_AUTH is missing. Configure it in local.properties or ~/.gradle/gradle.properties")
+                    return@withContext "MOONDREAM_AUTH missing"
+                }
+
                 val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
                 val body = requestBody.toString().toRequestBody(mediaType)
 
                 val request = Request.Builder()
                     .url("https://api.moondream.ai/v1/query")
                     .header("Content-Type", "application/json")
-                    .header("X-Moondream-Auth", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlfaWQiOiI2YzE4ZDI4NC1lNDMzLTQxNjYtYjg4Ni1jOGY4YjIxMTc1OGEiLCJvcmdfaWQiOiJkUDFESW96ZXFTNUxEc3ByNDFXT2N6dkJuSFpOM0hXWSIsImlhdCI6MTc3MDgzNDEyNiwidmVyIjoxfQ.54YnmshifLTBAsOWGCDHR-GL6yzTV-H3EAFNimMbqLk")
+                    .header("X-Moondream-Auth", moondreamAuth)
                     .post(body)
                     .build()
 
@@ -5900,13 +5940,19 @@ Generate JavaScript automation code for the user's command:
                     put("object", objectDescription)
                 }
 
+                val moondreamAuth = BuildConfig.MOONDREAM_AUTH.trim()
+                if (moondreamAuth.isEmpty()) {
+                    Log.e("MainActivity", "MOONDREAM_AUTH is missing. Configure it in local.properties or ~/.gradle/gradle.properties")
+                    return@withContext null
+                }
+
                 val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
                 val body = requestBody.toString().toRequestBody(mediaType)
 
                 val request = Request.Builder()
                     .url("https://api.moondream.ai/v1/point")
                     .header("Content-Type", "application/json")
-                    .header("X-Moondream-Auth", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlfaWQiOiI2YzE4ZDI4NC1lNDMzLTQxNjYtYjg4Ni1jOGY4YjIxMTc1OGEiLCJvcmdfaWQiOiJkUDFESW96ZXFTNUxEc3ByNDFXT2N6dkJuSFpOM0hXWSIsImlhdCI6MTc3MDgzNDEyNiwidmVyIjoxfQ.54YnmshifLTBAsOWGCDHR-GL6yzTV-H3EAFNimMbqLk")
+                    .header("X-Moondream-Auth", moondreamAuth)
                     .post(body)
                     .build()
 
@@ -8510,13 +8556,19 @@ Generate JavaScript automation code for the user's command:
                 put("object", objectDescription)
             }
 
+            val moondreamAuth = BuildConfig.MOONDREAM_AUTH.trim()
+            if (moondreamAuth.isEmpty()) {
+                Log.e("MainActivity", "MOONDREAM_AUTH is missing. Configure it in local.properties or ~/.gradle/gradle.properties")
+                return@withContext null
+            }
+
             val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
             val body = requestBody.toString().toRequestBody(mediaType)
 
             val request = Request.Builder()
                 .url("https://api.moondream.ai/v1/point")
                 .header("Content-Type", "application/json")
-                .header("X-Moondream-Auth", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlfaWQiOiI2YzE4ZDI4NC1lNDMzLTQxNjYtYjg4Ni1jOGY4YjIxMTc1OGEiLCJvcmdfaWQiOiJkUDFESW96ZXFTNUxEc3ByNDFXT2N6dkJuSFpOM0hXWSIsImlhdCI6MTc3MDgzNDEyNiwidmVyIjoxfQ.54YnmshifLTBAsOWGCDHR-GL6yzTV-H3EAFNimMbqLk")
+                .header("X-Moondream-Auth", moondreamAuth)
                 .post(body)
                 .build()
 

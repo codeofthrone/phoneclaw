@@ -21,6 +21,16 @@ android {
             ?.replace("\"", "\\\"")
             ?: ""
         buildConfigField("String", "MOONDREAM_AUTH", "\"$moondreamAuth\"")
+
+        val geminiProxyUrl = (project.findProperty("GEMINI_PROXY_URL") as String?)
+            ?.replace("\"", "\\\"")
+            ?: ""
+        buildConfigField("String", "GEMINI_PROXY_URL", "\"$geminiProxyUrl\"")
+
+        val geminiProxyAuthToken = (project.findProperty("GEMINI_PROXY_AUTH_TOKEN") as String?)
+            ?.replace("\"", "\\\"")
+            ?: ""
+        buildConfigField("String", "GEMINI_PROXY_AUTH_TOKEN", "\"$geminiProxyAuthToken\"")
     }
 
     buildTypes {
